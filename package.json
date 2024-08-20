@@ -1,6 +1,6 @@
 {
   "name": "react-comments-mentions",
-  "version": "1.0.3-fix",
+  "version": "1.0.4",
   "description": "React component library for a functioning comments and user mentions",
   "author": "Akash Lakade",
   "license": "MIT",
