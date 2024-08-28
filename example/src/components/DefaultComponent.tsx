@@ -1,7 +1,7 @@
 import React from 'react'
 import { CommentSection } from 'react-comments-section'
 import 'react-comments-section/dist/index.css'
-import users from './users.json'
+import mentionData from './mentionData'
 const DefaultComponent = () => {
   const data = [
     {
@@ -77,10 +77,7 @@ const DefaultComponent = () => {
         currentData={(data: any) => {
           console.log('curent data', data)
         }}
-        mentionSuggestions={users.map((user) => ({
-          id: user.id,
-          display: user.full_name || user.user_name,
-        }))}
+        mentionSuggestions={mentionData}
       />
     </div>
   )

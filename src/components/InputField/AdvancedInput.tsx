@@ -1,29 +1,55 @@
-import React, { useState, useEffect } from 'react'
-import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css'
-import { useContext } from 'react'
-import { GlobalContext } from '../../context/Provider'
-import { EditorState, ContentState, convertToRaw } from 'draft-js'
-import { Editor } from 'react-draft-wysiwyg'
-import draftToHtml from 'draftjs-to-html'
-import htmlToDraft from 'html-to-draftjs'
-
+import React, { useState, useRef, useCallback, useEffect, useContext } from 'react';
+import { EditorState, convertToRaw } from 'draft-js';
+import Editor from '@draft-js-plugins/editor';
+import createMentionPlugin, { MentionData, defaultSuggestionsFilter } from '@draft-js-plugins/mention';
+import { GlobalContext } from '../../context/Provider';
+import { SubMentionComponentProps } from '@draft-js-plugins/mention/lib/Mention';
 interface AdvancedInputProps {
-  formStyle?: object
-  handleSubmit: Function
-  mode?: string
-  cancelBtnStyle?: object
-  submitBtnStyle?: object
-  comId?: string
-  imgStyle?: object
-  imgDiv?: object
-  customImg?: string
-  text: string
+  formStyle?: object;
+  handleSubmit: (event: React.FormEvent, content: string, editorText: EditorState) => void;
+  mode?: string;
+  cancelBtnStyle?: object;
+  submitBtnStyle?: object;
+  comId?: string;
+  imgStyle?: object;
+  imgDiv?: object;
+  customImg?: string;
+  text: string;
+  editorText?: EditorState;
 }
 
-export interface MentionSuggestion {
-  id: string;
-  display: string;
-}
+const MentionComponent = (props: SubMentionComponentProps) => {
+  const { children, mention } = props;
+debugger
+  const link = mention?.link || "#";
+
+  const handleClick = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
+    e.preventDefault();
+    if (link !== "#") {
+      window.open(link, "_blank", "noopener,noreferrer"); // Open in a new tab
+    }
+  };
+
+  return (
+    <a
+      href="#"
+      onClick={handleClick}
+      style={{ textDecoration: "underline", color: "blue", cursor: "pointer" }}
+    >
+      {children}
+    </a>
+  );
+};
+
+const mentionPlugin = createMentionPlugin({
+  mentionTrigger: ['@', '#'],
+  mentionPrefix: (trigger) => trigger,
+  supportWhitespace: true,
+  mentionComponent: MentionComponent,
+});
+
+const { MentionSuggestions } = mentionPlugin;
+const plugins = [mentionPlugin];
 
 const AdvancedInput = ({
   formStyle,
@@ -35,52 +61,55 @@ const AdvancedInput = ({
   imgDiv,
   imgStyle,
   customImg,
-  text,
+  editorText
 }: AdvancedInputProps) => {
-  const [html, setHtml] = useState('<p></p>')
-  const globalStore: any = useContext(GlobalContext)
-  useEffect(() => {
-    if (text != '') {
-      setHtml(text)
-    }
-  }, [text])
-  useEffect(() => {
-    if (html != '<p></p>') {
-      setEditor(EditorState.createWithContent(contentState))
-    }
-  }, [html])
+  const globalStore: any = useContext(GlobalContext);
+  const [editorState, setEditorState] = useState(EditorState.createEmpty());
+  const [open, setOpen] = useState(false);
+  const [suggestions, setSuggestions] = useState<MentionData[]>([]);
+  const editorRef = useRef<Editor>(null);
 
-  const contentBlock = htmlToDraft(html)
-  const contentState = ContentState.createFromBlockArray(
-    contentBlock.contentBlocks
-  )
-  const [editorState, setEditor] = useState(
-    EditorState.createWithContent(contentState)
-  )
-  const [editText, setEditText] = useState<string>('')
-
-  const onEditorStateChange: Function = (editorState: any) => {
-    setEditor(editorState)
-  }
   useEffect(() => {
-    setEditText(
-      draftToHtml(convertToRaw(editorState.getCurrentContent())).trim()
-    )
-  }, [editorState])
+    if (editorText) {
+      try {
+
+        setEditorState(editorText)
+      } catch {
+        setEditorState(editorText)
+      }
+    }
+  }, [editorText]);
+
+  const onChange = useCallback((newEditorState: EditorState) => {
+    setEditorState(newEditorState);
+  }, []);
+
+  const onOpenChange = useCallback((_open: boolean) => {
+    setOpen(_open);
+  }, []);
+
+  const onSearchChange = useCallback(({ trigger, value }: { trigger: string; value: string }) => {
+    setSuggestions(
+      defaultSuggestionsFilter(value, globalStore.mentionSuggestions[trigger as '@' | '#']) as MentionData[]
+    );
+  }, [globalStore]);
+
+  const handleSubmitWrapper = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const contentState = editorState.getCurrentContent();
+    const rawContentState = convertToRaw(contentState);
+    if (rawContentState) {
+      await handleSubmit(e, JSON.stringify(rawContentState), editorState);
+      setEditorState(EditorState.createEmpty());
+    }
+  };
 
   return (
     <div className='advanced-overlay'>
       <div className='userImg' style={imgDiv}>
-        <a
-          target='_blank'
-          href={globalStore.currentUserData.currentUserProfile}
-        >
+        <a target='_blank' href={globalStore.currentUserData.currentUserProfile}>
           <img
-            src={
-              globalStore.customImg ||
-              customImg ||
-              globalStore.currentUserData.currentUserImg
-            }
+            src={globalStore.customImg || customImg || globalStore.currentUserData.currentUserImg}
             style={globalStore.imgStyle || imgStyle}
             alt='userIcon'
             className='imgdefault'
@@ -89,106 +118,32 @@ const AdvancedInput = ({
       </div>
       <div className='advanced-input'>
         <form
-          className='form advanced-form '
+          className='form advanced-form'
           style={globalStore.formStyle || formStyle}
-          onSubmit={async (e) =>
-            editText != '<p></p>'
-              ? (await handleSubmit(e, editText),
-                setEditor(EditorState.createEmpty()))
-              : null
-          }
+          onSubmit={handleSubmitWrapper}
         >
-          <div className='advanced-border'>
+          <div className="editor" 
+            onClick={() => {
+              editorRef.current?.focus();
+            }}
+          >
             <Editor
               editorState={editorState}
-              placeholder={'Type your reply here'}
-              onEditorStateChange={(editorState) =>
-                onEditorStateChange(editorState)
-              }
-              toolbar={{
-                options: [
-                  'inline',
-                  'blockType',
-                  'list',
-                  'colorPicker',
-                  'link',
-                  'emoji',
-                  'image'
-                ],
-
-                link: {
-                  inDropdown: false,
-                  className: undefined,
-                  component: undefined,
-                  popupClassName: undefined,
-                  dropdownClassName: undefined,
-                  showOpenOptionOnHover: true,
-                  defaultTargetOption: '_self',
-                  options: ['link'],
-                  linkCallback: undefined
-                },
-                image: {
-                  className: undefined,
-                  component: undefined,
-                  popupClassName: undefined,
-                  urlEnabled: true,
-                  uploadEnabled: true,
-                  alignmentEnabled: true,
-                  uploadCallback: undefined,
-                  previewImage: false,
-                  inputAccept:
-                    'image/gif,image/jpeg,image/jpg,image/png,image/svg',
-                  alt: { present: false, mandatory: false },
-                  defaultSize: {
-                    height: 'auto',
-                    width: 'auto'
-                  }
-                },
-                inline: {
-                  inDropdown: false,
-                  className: undefined,
-                  component: undefined,
-                  dropdownClassName: undefined,
-                  options: [
-                    'bold',
-                    'italic',
-                    'underline',
-                    'strikethrough',
-                    'monospace'
-                  ]
-                },
-                blockType: {
-                  inDropdown: true,
-                  options: ['Normal', 'Blockquote', 'Code'],
-                  className: undefined,
-                  component: undefined,
-                  dropdownClassName: undefined
-                },
-                list: {
-                  inDropdown: false,
-                  className: undefined,
-                  component: undefined,
-                  dropdownClassName: undefined,
-                  options: ['unordered', 'ordered']
-                }
-              }}
-              toolbarHidden={globalStore.hideToolbar}
-              mention={{
-                separator: ' ',
-                trigger: '@',
-                suggestions: globalStore?.mentionSuggestions?.length > 0 ? globalStore.mentionSuggestions.map((suggestion: MentionSuggestion) => ({
-                  text: suggestion.display,
-                  value: suggestion.display,
-                  url: suggestion.id
-                })) : [],
-              }}
+              onChange={onChange}
+              plugins={plugins}
+              ref={editorRef}
+              placeholder="Add a comment or use '@' to mention users or '#' for assets"
+            />
+            <MentionSuggestions
+              open={open}
+              onOpenChange={onOpenChange}
+              onSearchChange={onSearchChange}
+              suggestions={suggestions}
+              // onAddMention={(mention: MentionData) => {
+              //   console.log('Added mention:', mention);
+              // }}
             />
           </div>
-          {/* <div
-            dangerouslySetInnerHTML={{
-              __html: text
-            }}
-          /> */}
           <div className='advanced-btns'>
             {mode && (
               <button
@@ -207,14 +162,8 @@ const AdvancedInput = ({
             <button
               className='advanced-post postBtn'
               type='submit'
-              disabled={editText === '<p></p>' ? true : false}
+              disabled={!editorState.getCurrentContent().hasText()}
               style={globalStore.submitBtnStyle || submitBtnStyle}
-              onClick={async (e) =>
-                editText != '<p></p>'
-                  ? (await handleSubmit(e, editText),
-                    setEditor(EditorState.createEmpty()))
-                  : null
-              }
             >
               Post
             </button>

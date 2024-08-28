@@ -17,10 +17,6 @@
     background-color: transparent;
     margin-left: 6px;
     border-radius: 6px;
-    
-    &__input {
-      border-radius: 6px;
-    }
   }
   .postComment:focus {
     outline: none;
@@ -161,4 +157,87 @@
 .advanced-input {
   margin-left: 6px;
   width: 100%;
+}
+
+
+.editor {
+  box-sizing: border-box;
+  cursor: text;
+  border: 1px solid #e8e8e8;
+  padding: 16px;
+  border-radius: 10px;
+  background: transparent;
+  width: 100%;
+}
+
+.editor:focus-within {
+  border: 1px solid #353535;
+}
+
+.DraftEditor-root {
+  position: relative;
+}
+
+.DraftEditor-editorContainer, .DraftEditor-root, .public-DraftEditor-content {
+  height: inherit;
+  text-align: initial;
+}
+
+.public-DraftEditorPlaceholder-root {
+  color: #9197a3;
+  position: absolute;
+  z-index: 0;
+}
+
+.public-DraftEditor-content[contenteditable=true] {
+  -webkit-user-modify: read-write-plaintext-only;
+}
+
+.DraftEditor-editorContainer {
+    background-color: rgba(255, 255, 255, 0);
+    border-left: .1px solid transparent;
+    position: relative;
+    z-index: 1;
+}
+
+.public-DraftEditor-content[contenteditable=true] {
+  -webkit-user-modify: read-write-plaintext-only;
+}
+.public-DraftStyleDefault-ltr {
+  direction: ltr;
+  text-align: left;
+}
+
+.public-DraftStyleDefault-block {
+  position: relative;
+  white-space: pre-wrap;
+}
+
+.public-DraftStyleDefault-block {
+  margin: 0;
+}
+
+.mnw6qvm {
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  max-height: 200px;
+  overflow-y: auto;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  z-index: 100;
+}
+
+.mtiwdxc,
+.myz2dw1 {
+  padding: 8px;
+  cursor: pointer;
+}
+
+.mtiwdxc[aria-selected="true"],
+.myz2dw1[aria-selected="true"] {
+  background-color: #d0e6f7;
+}
+
+.mpqdcgq {
+  margin-left: 8px;
 }

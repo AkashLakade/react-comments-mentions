@@ -1,9 +1,14 @@
 import React, { createContext, useEffect, useState } from 'react'
 // const { v4: uuidv4 } = require('uuid')
 import _ from 'lodash'
+import { MentionData } from '@draft-js-plugins/mention';
+import { EditorState } from 'draft-js';
 
 export const GlobalContext = createContext({})
-
+export interface MentionsObject {
+  "@": MentionData[];
+  "#": MentionData[];
+}
 export const GlobalProvider = ({
   children,
   currentUser,
@@ -51,6 +56,7 @@ export const GlobalProvider = ({
     avatarUrl: string
     text: string
     userProfile?: string
+    editorText?: EditorState
     replies?:
       | Array<{
           userId: string
@@ -59,6 +65,7 @@ export const GlobalProvider = ({
           avatarUrl: string
           text: string
           userProfile?: string
+          editorText?: EditorState
         }>
       | undefined
   }>
@@ -68,7 +75,7 @@ export const GlobalProvider = ({
   onEditAction?: Function
   currentData?: Function
   advancedInput?: boolean
-  mentionSuggestions?: Array<{ id: string; display: string }>
+  mentionSuggestions?: MentionsObject
   hideToolbar?: boolean
 }) => {
   const [currentUserData] = useState(currentUser)
@@ -80,6 +87,7 @@ export const GlobalProvider = ({
       avatarUrl: string
       text: string
       userProfile?: string
+      editorText?: EditorState
       replies?:
         | Array<{
             userId: string
@@ -88,6 +96,7 @@ export const GlobalProvider = ({
             avatarUrl: string
             text: string
             userProfile?: string
+            editorText?: EditorState
           }>
         | undefined
     }>
@@ -132,7 +141,7 @@ export const GlobalProvider = ({
     }
   }
 
-  const onSubmit = (text: string, uuid: string) => {
+  const onSubmit = (text: string, uuid: string, editorText?: EditorState) => {
     let copyData = [...data]
     copyData.push({
       userId: currentUserData!.currentUserId,
@@ -143,12 +152,13 @@ export const GlobalProvider = ({
         : undefined,
       fullName: currentUserData!.currentUserFullName,
       text: text,
+      editorText: editorText,
       replies: []
     })
     setData(copyData)
   }
 
-  const onEdit = (text: string, comId: string, parentId: string) => {
+  const onEdit = (text: string, comId: string, parentId: string, editorText: EditorState) => {
     let copyData = [...data]
     if (parentId) {
       const indexOfParent = _.findIndex(copyData, { comId: parentId })
@@ -156,11 +166,13 @@ export const GlobalProvider = ({
         comId: comId
       })
       copyData[indexOfParent].replies![indexOfId].text = text
+      copyData[indexOfParent].replies![indexOfId].editorText = editorText
       setData(copyData)
       handleAction(comId, true)
     } else {
       const indexOfId = _.findIndex(copyData, { comId: comId })
       copyData[indexOfId].text = text
+      copyData[indexOfId].editorText = editorText
       setData(copyData)
       handleAction(comId, true)
     }
@@ -170,7 +182,8 @@ export const GlobalProvider = ({
     text: string,
     comId: string,
     parentId: string,
-    uuid: string
+    uuid: string,
+    editorText?: EditorState
   ) => {
     let copyData = [...data]
     if (parentId) {
@@ -183,7 +196,8 @@ export const GlobalProvider = ({
           ? currentUserData!.currentUserProfile
           : undefined,
         fullName: currentUserData!.currentUserFullName,
-        text: text
+        text: text,
+        editorText: editorText
       })
       setData(copyData)
       handleAction(comId, false)
@@ -199,7 +213,8 @@ export const GlobalProvider = ({
           ? currentUserData!.currentUserProfile
           : undefined,
         fullName: currentUserData!.currentUserFullName,
-        text: text
+        text: text,
+        editorText: editorText
       })
       setData(copyData)
       handleAction(comId, false)

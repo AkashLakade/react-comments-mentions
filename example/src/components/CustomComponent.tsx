@@ -3,6 +3,7 @@ import { CommentSection } from 'react-comments-section'
 import 'react-comments-section/dist/index.css'
 import { useState } from 'react'
 import users from './users.json'
+import mentionData from './mentionData'
 
 const CustomComponent = () => {
   const [data] = useState([
@@ -110,10 +111,7 @@ const CustomComponent = () => {
         removeEmoji={false}
         overlayStyle={{ backgroundColor: '#0f0d29', color: 'white' }}
         replyInputStyle={{ borderBottom: '1px solid black', color: 'black' }}
-        mentionSuggestions={users.map((user) => ({
-          id: user.id,
-          display: user.full_name || user.user_name,
-        }))}
+        mentionSuggestions={mentionData}
       />
     </div>
   )

@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react'
 import { CommentSection } from 'react-comments-section'
 import 'react-comments-section/dist/index.css'
-import users from './users.json'
+import mentionData from './mentionData'
 class ClassComponent extends PureComponent {
   state = {
     data: [
@@ -72,10 +72,7 @@ class ClassComponent extends PureComponent {
             loginLink: 'http://localhost:3001/',
             signupLink: 'http://localhost:3001/'
           }}
-          mentionSuggestions={users.map((user) => ({
-            id: user.id,
-            display: user.full_name || user.user_name,
-          }))}
+          mentionSuggestions={mentionData}
         />
       </div>
     )

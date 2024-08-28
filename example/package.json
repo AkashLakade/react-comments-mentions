@@ -10,6 +10,8 @@
     "eject": "node ../node_modules/react-scripts/bin/react-scripts.js eject"
   },
   "dependencies": {
+    "@draft-js-plugins/editor": "file:../node_modules/@draft-js-plugins/editor",
+    "@draft-js-plugins/mention": "file:../node_modules/@draft-js-plugins/mention",
     "@testing-library/jest-dom": "file:../node_modules/@testing-library/jest-dom",
     "@testing-library/react": "file:../node_modules/@testing-library/react",
     "@testing-library/user-event": "file:../node_modules/@testing-library/user-event",
@@ -17,6 +19,9 @@
     "@types/node": "file:../node_modules/@types/node",
     "@types/react": "file:../node_modules/@types/react",
     "@types/react-dom": "file:../node_modules/@types/react-dom",
+    "draft-js": "file:../node_modules/draft-js",
+    "draftjs-to-html": "file:../node_modules/draftjs-to-html",
+    "html-to-draftjs": "file:../node_modules/html-to-draftjs",
     "react": "file:../node_modules/react",
     "react-comments-section": "file:..",
     "react-dom": "file:../node_modules/react-dom",

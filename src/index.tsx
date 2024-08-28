@@ -1,6 +1,6 @@
 import * as React from 'react'
 import CommentSectionComponent from './components/CommentSectionComponent/Index'
-import GlobalProvider from './context/Provider'
+import GlobalProvider, { MentionsObject } from './context/Provider'
 import './Index.scss'
 
 interface CommentSectionProps {
@@ -52,8 +52,7 @@ interface CommentSectionProps {
         }>
       | undefined
   }>
-  mentionSuggestions?: Array<{ id: string; display: string }
-  >
+  mentionSuggestions?: MentionsObject
   hideToolbar?: boolean
 }
 

@@ -6,6 +6,7 @@ import { Menu, MenuItem } from '@szhsin/react-menu'
 import '@szhsin/react-menu/dist/core.css'
 import DeleteModal from './DeleteModal'
 import React from 'react'
+import { EditorState } from 'draft-js'
 
 interface CommentStructureProps {
   info: {
@@ -17,6 +18,7 @@ interface CommentStructureProps {
     userProfile?: string
     timestamp: string
     replies?: Array<object> | undefined
+    editorText?: EditorState
   }
   editMode: boolean
   parentId?: string
@@ -106,7 +108,7 @@ const CommentStructure = ({
             <div
               className='infoStyle'
               dangerouslySetInnerHTML={{
-                __html: info.text
+                __html: convertJsonToHtml(JSON.parse(info.text)),
               }}
             />
           ) : (
@@ -163,6 +165,7 @@ const CommentStructure = ({
           fillerText={info.text}
           mode={'editMode'}
           parentId={parentId}
+          editorText={info.editorText}
         />
       )
     }
@@ -180,5 +183,44 @@ const CommentStructure = ({
     </div>
   )
 }
+
+export const convertJsonToHtml = (json: any) => {
+  const { blocks, entityMap } = json;
+  let html = "";
+
+  blocks.forEach((block: any) => {
+    let blockText = "";
+    let lastIndex = 0;
+
+    // Process each entity range
+    block.entityRanges.forEach((entityRange: any) => {
+      const { offset, length, key } = entityRange;
+      const entity = entityMap[key];
+      const { name, link } = entity.data.mention;
+
+      // Add text before the mention
+      blockText += block.text.substring(lastIndex, offset);
+
+      // Add the mention HTML based on its type
+      const mentionSymbol = entity?.type === 'mention' ? '@' : '#';
+      const mentionHtml = link
+        ? `<a href="${link}" target="_blank" rel="noopener noreferrer"><strong>${mentionSymbol}${name}</strong></a>`
+        : `<strong>${mentionSymbol}${name}</strong>`;
+      blockText += mentionHtml;
+
+      // Update lastIndex
+      lastIndex = offset + length;
+    });
+
+    // Add remaining text after the last mention
+    blockText += block.text.substring(lastIndex);
+
+    // Wrap block text in paragraph tags
+    html += `<p>${blockText}</p>`;
+  });
+
+  return html;
+};
+
 
 export default CommentStructure

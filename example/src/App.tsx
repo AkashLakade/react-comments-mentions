@@ -11,14 +11,14 @@ const App = () => {
     <div className='example-div'>
       <div className='head-title'>Demo Examples</div>
       <hr style={{ borderTop: '1px solid', width: '100%' }} />
-      <div className='example-row'>
+      {/* <div className='example-row'>
         <DefaultComponent />
         <ClassComponent />
       </div>
       <div className='example-row'>
         <CustomComponent />
-        {/* <LogInComponent /> */}
-      </div>
+        <LogInComponent />
+      </div> */}
       <div className='example-row'>
         <AdvancedComponent />
       </div>
