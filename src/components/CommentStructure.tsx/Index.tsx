@@ -205,7 +205,7 @@ export const convertJsonToHtml = (json: any) => {
       const mentionSymbol = entity?.type === 'mention' ? '@' : '#';
       const mentionHtml = link
         ? `<a href="${link}" target="_blank" rel="noopener noreferrer"><strong>${mentionSymbol}${name}</strong></a>`
-        : `<strong>${mentionSymbol}${name}</strong>`;
+        : `<a href="#" onclick="event.preventDefault();"><strong>${mentionSymbol}${name}</strong></a>`;
       blockText += mentionHtml;
 
       // Update lastIndex

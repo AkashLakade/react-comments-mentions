@@ -72,7 +72,6 @@ const AdvancedInput = ({
   useEffect(() => {
     if (editorText) {
       try {
-
         setEditorState(editorText)
       } catch {
         setEditorState(editorText)
@@ -96,11 +95,13 @@ const AdvancedInput = ({
 
   const handleSubmitWrapper = async (e: React.FormEvent) => {
     e.preventDefault();
-    const contentState = editorState.getCurrentContent();
-    const rawContentState = convertToRaw(contentState);
-    if (rawContentState) {
-      await handleSubmit(e, JSON.stringify(rawContentState), editorState);
-      setEditorState(EditorState.createEmpty());
+    if(editorState){
+      const contentState = editorState?.getCurrentContent();
+      const rawContentState = convertToRaw(contentState);
+      if (rawContentState) {
+        await handleSubmit(e, JSON.stringify(rawContentState), editorState);
+        setEditorState(EditorState.createEmpty());
+      }
     }
   };
 

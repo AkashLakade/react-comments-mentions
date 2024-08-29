@@ -56,7 +56,7 @@ export const GlobalProvider = ({
     avatarUrl: string
     text: string
     userProfile?: string
-    editorText?: EditorState
+    editorText: EditorState
     replies?:
       | Array<{
           userId: string
@@ -65,7 +65,7 @@ export const GlobalProvider = ({
           avatarUrl: string
           text: string
           userProfile?: string
-          editorText?: EditorState
+          editorText: EditorState
         }>
       | undefined
   }>
@@ -183,7 +183,7 @@ export const GlobalProvider = ({
     comId: string,
     parentId: string,
     uuid: string,
-    editorText?: EditorState
+    editorText: EditorState
   ) => {
     let copyData = [...data]
     if (parentId) {
