@@ -50,14 +50,20 @@ const CommentStructure = ({
               </button>
             }
           >
-            <MenuItem
-              onClick={() => globalStore.handleAction(info.comId, true)}
-            >
-              edit
-            </MenuItem>
-            <MenuItem>
-              <DeleteModal comId={info.comId} parentId={parentId} />
-            </MenuItem>
+            {
+              globalStore.isEditable &&
+              <MenuItem
+                onClick={() => globalStore.handleAction(info.comId, true)}
+              >
+                edit
+              </MenuItem>
+            }
+            {
+              globalStore.isAbleToDelete && 
+              <MenuItem>
+                <DeleteModal comId={info.comId} parentId={parentId} />
+              </MenuItem>
+            }
           </Menu>
         )}
       </div>
@@ -94,7 +100,7 @@ const CommentStructure = ({
           <div>{info.text}</div>
           {userInfo()}
         </div>
-        {currentUser && optionsMenu()}
+        {globalStore.showActionMenu && (globalStore.isAbleToDelete || globalStore.isEditable) && currentUser && optionsMenu()}
       </div>
     )
   }
@@ -116,7 +122,7 @@ const CommentStructure = ({
           )}
           <div style={{ marginLeft: 32 }}>
             {' '}
-            {currentUser && (
+            {globalStore.isAbleToReply && currentUser && (
               <div>
                 <button
                   className='replyBtn'
@@ -130,7 +136,7 @@ const CommentStructure = ({
             )}
           </div>
         </div>
-        {currentUser && optionsMenu()}
+        {globalStore.showActionMenu && (globalStore.isAbleToDelete || globalStore.isEditable) && currentUser && optionsMenu()}
       </div>
     )
   }

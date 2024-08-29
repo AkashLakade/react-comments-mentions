@@ -5,8 +5,7 @@ import { useState } from 'react'
 import suggestionsData from "./mentionData"
 
 const AdvancedComponent = () => {
-  const [data] = useState([
-  ])
+  const [data] = useState([])
 
   return (
     <div style={{ width: '100%' }}>

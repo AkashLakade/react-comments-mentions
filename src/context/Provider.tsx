@@ -30,7 +30,11 @@ export const GlobalProvider = ({
   removeEmoji,
   advancedInput,
   mentionSuggestions,
-  hideToolbar
+  hideToolbar,
+  isAbleToDelete = true,
+  isEditable = true,
+  showActionMenu = true,
+  isAbleToReply = true,
 }: {
   children: any
   currentUser?: {
@@ -77,6 +81,10 @@ export const GlobalProvider = ({
   advancedInput?: boolean
   mentionSuggestions?: MentionsObject
   hideToolbar?: boolean
+  isEditable?: boolean
+  isAbleToDelete?: boolean
+  showActionMenu?: boolean
+  isAbleToReply?: boolean
 }) => {
   const [currentUserData] = useState(currentUser)
   const [data, setData] = useState<
@@ -265,7 +273,11 @@ export const GlobalProvider = ({
         removeEmoji: removeEmoji,
         advancedInput: advancedInput,
         mentionSuggestions: mentionSuggestions,
-        hideToolbar: hideToolbar
+        hideToolbar: hideToolbar,
+        isEditable: isEditable,
+        isAbleToDelete: isAbleToDelete,
+        showActionMenu: showActionMenu,
+        isAbleToReply: isAbleToReply
       }}
     >
       {children}

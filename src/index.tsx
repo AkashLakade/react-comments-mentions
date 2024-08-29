@@ -2,6 +2,7 @@ import * as React from 'react'
 import CommentSectionComponent from './components/CommentSectionComponent/Index'
 import GlobalProvider, { MentionsObject } from './context/Provider'
 import './Index.scss'
+import { EditorState } from 'draft-js'
 
 interface CommentSectionProps {
   currentUser: {
@@ -41,6 +42,7 @@ interface CommentSectionProps {
     avatarUrl: string
     text: string
     userProfile?: string
+    editorText: EditorState
     replies?:
       | Array<{
           userId: string
@@ -48,12 +50,17 @@ interface CommentSectionProps {
           fullName: string
           avatarUrl: string
           text: string
+          editorText: EditorState
           userProfile?: string
         }>
       | undefined
   }>
   mentionSuggestions?: MentionsObject
   hideToolbar?: boolean
+  isEditable?: boolean
+  isAbleToDelete?: boolean
+  showActionMenu?: boolean
+  isAbleToReply?: boolean
 }
 
 export const CommentSection = ({
@@ -81,7 +88,11 @@ export const CommentSection = ({
   currentData,
   advancedInput,
   mentionSuggestions,
-  hideToolbar
+  hideToolbar,
+  isEditable,
+  isAbleToDelete,
+  isAbleToReply,
+  showActionMenu
 }: CommentSectionProps) => {
   return (
     <GlobalProvider
@@ -104,7 +115,11 @@ export const CommentSection = ({
       removeEmoji={removeEmoji}
       advancedInput={advancedInput}
       mentionSuggestions={mentionSuggestions}
-      hideToolbar={hideToolbar}
+      hideToolbar={hideToolbar} 
+      isEditable={isEditable}
+      isAbleToDelete={isAbleToDelete}
+      isAbleToReply={isAbleToReply}
+      showActionMenu={showActionMenu}
     >
       <CommentSectionComponent
         overlayStyle={overlayStyle}
