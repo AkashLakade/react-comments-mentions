@@ -20,13 +20,12 @@ interface AdvancedInputProps {
 
 const MentionComponent = (props: SubMentionComponentProps) => {
   const { children, mention } = props;
-debugger
   const link = mention?.link || "#";
 
   const handleClick = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
     e.preventDefault();
     if (link !== "#") {
-      window.open(link, "_blank", "noopener,noreferrer"); // Open in a new tab
+      window.open(link, "_blank", "noopener,noreferrer");
     }
   };
 
@@ -70,12 +69,10 @@ const AdvancedInput = ({
   const editorRef = useRef<Editor>(null);
 
   useEffect(() => {
-    if (editorText) {
-      try {
-        setEditorState(editorText)
-      } catch {
-        setEditorState(editorText)
-      }
+    if (editorText && editorText instanceof EditorState) {
+      setEditorState(editorText)
+    } else {
+      setEditorState(EditorState.createEmpty());
     }
   }, [editorText]);
 
@@ -96,7 +93,7 @@ const AdvancedInput = ({
   const handleSubmitWrapper = async (e: React.FormEvent) => {
     e.preventDefault();
     if(editorState){
-      const contentState = editorState?.getCurrentContent();
+      const contentState = editorState.getCurrentContent();
       const rawContentState = convertToRaw(contentState);
       if (rawContentState) {
         await handleSubmit(e, JSON.stringify(rawContentState), editorState);
@@ -140,9 +137,6 @@ const AdvancedInput = ({
               onOpenChange={onOpenChange}
               onSearchChange={onSearchChange}
               suggestions={suggestions}
-              // onAddMention={(mention: MentionData) => {
-              //   console.log('Added mention:', mention);
-              // }}
             />
           </div>
           <div className='advanced-btns'>
@@ -163,7 +157,7 @@ const AdvancedInput = ({
             <button
               className='advanced-post postBtn'
               type='submit'
-              disabled={!editorState || !editorState.getCurrentContent().hasText()}
+              disabled={!editorState || !(editorState instanceof EditorState) || !editorState.getCurrentContent().hasText()}
               style={globalStore.submitBtnStyle || submitBtnStyle}
             >
               Post
@@ -175,4 +169,4 @@ const AdvancedInput = ({
   )
 }
 
-export default AdvancedInput
+export default AdvancedInput;
