@@ -163,7 +163,7 @@ const AdvancedInput = ({
             <button
               className='advanced-post postBtn'
               type='submit'
-              disabled={!editorState.getCurrentContent().hasText()}
+              disabled={!editorState || !editorState.getCurrentContent().hasText()}
               style={globalStore.submitBtnStyle || submitBtnStyle}
             >
               Post
