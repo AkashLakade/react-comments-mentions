@@ -1,7 +1,7 @@
 import React, { useState, useRef, useCallback, useEffect, useContext } from 'react';
 import { EditorState, convertToRaw } from 'draft-js';
 import Editor from '@draft-js-plugins/editor';
-import createMentionPlugin, { MentionData, defaultSuggestionsFilter } from '@draft-js-plugins/mention';
+import createMentionPlugin, { MentionData } from '@draft-js-plugins/mention';
 import { GlobalContext } from '../../context/Provider';
 import { SubMentionComponentProps } from '@draft-js-plugins/mention/lib/Mention';
 interface AdvancedInputProps {
@@ -84,11 +84,16 @@ const AdvancedInput = ({
     setOpen(_open);
   }, []);
 
-  const onSearchChange = useCallback(({ trigger, value }: { trigger: string; value: string }) => {
-    setSuggestions(
-      defaultSuggestionsFilter(value, globalStore.mentionSuggestions[trigger as '@' | '#']) as MentionData[]
-    );
-  }, [globalStore]);
+  const onSearchChange = useCallback(
+    ({ trigger, value }: { trigger: string; value: string }) => {
+      const filteredSuggestions = globalStore.mentionSuggestions[trigger as '@' | '#'].filter((mention: any) =>
+        mention.name.toLowerCase().includes(value.toLowerCase())
+      );
+  
+      setSuggestions(filteredSuggestions as MentionData[]);
+    },
+    [globalStore]
+  );
 
   const handleSubmitWrapper = async (e: React.FormEvent) => {
     e.preventDefault();
