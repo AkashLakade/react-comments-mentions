@@ -65,7 +65,7 @@ const AdvancedInput = ({
   const globalStore: any = useContext(GlobalContext);
   const [editorState, setEditorState] = useState(EditorState.createEmpty());
   const [open, setOpen] = useState(false);
-  const [suggestions, setSuggestions] = useState<MentionData[]>([]);
+  const [suggestions, setSuggestions] = useState<MentionData[]>(globalStore.mentionSuggestions || []);
   const editorRef = useRef<Editor>(null);
 
   useEffect(() => {
@@ -130,7 +130,7 @@ const AdvancedInput = ({
               onChange={onChange}
               plugins={plugins}
               ref={editorRef}
-              placeholder="Add a comment or use '@' to mention users or '#' for assets"
+              placeholder={globalStore.isAuthenticated ? "Add a comment or use '@' to mention users or '#' for assets" : "Start typing a comment..."}
             />
             <MentionSuggestions
               open={open}

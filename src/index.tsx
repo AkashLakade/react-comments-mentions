@@ -61,6 +61,7 @@ interface CommentSectionProps {
   isAbleToDelete?: boolean
   showActionMenu?: boolean
   isAbleToReply?: boolean
+  isAuthenticated?: boolean 
 }
 
 export const CommentSection = ({
@@ -92,7 +93,8 @@ export const CommentSection = ({
   isEditable,
   isAbleToDelete,
   isAbleToReply,
-  showActionMenu
+  showActionMenu,
+  isAuthenticated
 }: CommentSectionProps) => {
   return (
     <GlobalProvider
@@ -120,6 +122,7 @@ export const CommentSection = ({
       isAbleToDelete={isAbleToDelete}
       isAbleToReply={isAbleToReply}
       showActionMenu={showActionMenu}
+      isAuthenticated={isAuthenticated}
     >
       <CommentSectionComponent
         overlayStyle={overlayStyle}

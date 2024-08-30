@@ -53,6 +53,7 @@ const AdvancedComponent = () => {
         replyInputStyle={{ borderBottom: '1px solid black', color: 'black' }}
         mentionSuggestions={suggestionsData}
         hideToolbar
+        isAuthenticated = {true}
       />
     </div>
   )

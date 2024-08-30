@@ -35,6 +35,7 @@ export const GlobalProvider = ({
   isEditable = true,
   showActionMenu = true,
   isAbleToReply = true,
+  isAuthenticated
 }: {
   children: any
   currentUser?: {
@@ -85,6 +86,7 @@ export const GlobalProvider = ({
   isAbleToDelete?: boolean
   showActionMenu?: boolean
   isAbleToReply?: boolean
+  isAuthenticated?: boolean
 }) => {
   const [currentUserData] = useState(currentUser)
   const [data, setData] = useState<
@@ -277,7 +279,8 @@ export const GlobalProvider = ({
         isEditable: isEditable,
         isAbleToDelete: isAbleToDelete,
         showActionMenu: showActionMenu,
-        isAbleToReply: isAbleToReply
+        isAbleToReply: isAbleToReply,
+        isAuthenticated: isAuthenticated
       }}
     >
       {children}

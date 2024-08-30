@@ -35,6 +35,7 @@ const InputField = ({
   editorText
 }: InputFieldProps) => {
   const [text, setText] = useState('')
+  const [editorState, setEditorState] = useState(EditorState.createEmpty())
   useEffect(() => {
     if (fillerText) {
       try {
@@ -46,6 +47,16 @@ const InputField = ({
       }
     }
   }, [fillerText])
+
+  useEffect(() => {
+    if (editorText) {
+      try {
+        setEditorState(editorText)
+      } catch (error) {
+        setEditorState(editorText)
+      }
+    }
+  }, [editorText])
 
   const globalStore: any = useContext(GlobalContext)
 
@@ -138,7 +149,7 @@ const InputField = ({
           imgDiv={imgDiv}
           imgStyle={imgStyle}
           customImg={customImg}
-          editorText={editorText}
+          editorText={editorState}
         />
       ) : (
         <AdvancedInput
@@ -152,7 +163,7 @@ const InputField = ({
           imgDiv={imgDiv}
           imgStyle={imgStyle}
           customImg={customImg}
-          editorText={editorText}
+          editorText={editorState}
         />
       )}
     </div>
